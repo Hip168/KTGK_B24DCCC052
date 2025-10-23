@@ -19,55 +19,89 @@ If you are developing a production application, we recommend updating the config
 export default defineConfig([
   globalIgnores(['dist']),
   {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+    # KTGK - Ứng dụng demo Blog (React + TypeScript + Vite)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+    Đây là một ứng dụng nhỏ dùng để trình bày danh sách bài viết (posts), chi tiết bài viết, và form tạo bài. Mục tiêu: giúp thầy/chấm bài dễ hiểu cấu trúc, dữ liệu mẫu và cách chạy project.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+    ## Tổng quan
+    - Ngôn ngữ: TypeScript
+    - Framework: React
+    - Build tool: Vite
+    - Mục đích: Demo chức năng CRUD cơ bản cho bài viết (hiển thị danh sách, xem chi tiết, tạo bài mới) dùng dữ liệu mẫu lưu tạm trong file.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+    ## Cấu trúc chính của project
+    - `index.html` - entry HTML
+    - `src/main.tsx` - điểm khởi chạy React
+    - `src/App.tsx` - component gốc
+    - `src/routes.tsx` - định nghĩa route (nếu có)
+    - `src/types.ts` - định nghĩa các kiểu dữ liệu (interface `Post`)
+    - `src/data.ts` - dữ liệu mẫu (mảng `SAMPLE_POSTS`) — nơi chứa ~20 bài viết mẫu
+    - `src/components/` - các component UI:
+      - `Navbar.tsx` - thanh điều hướng
+      - `PostList.tsx` - danh sách bài viết
+      - `PostCard.tsx` - thẻ bài viết (ở danh sách)
+      - `PostDetail.tsx` - trang chi tiết bài viết
+      - `PostForm.tsx` - form để thêm bài viết mới
+    - `src/utils/storage.ts` - helper lưu/đọc localStorage (nếu dùng lưu tạm)
+    - `public/` - tài nguyên tĩnh
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+    ## Dữ liệu mẫu
+    File `src/data.ts` chứa hằng `SAMPLE_POSTS: Post[]` với khoảng 20 bài viết mẫu. Mỗi bài bao gồm:
+    - `id` (string)
+    - `title` (string)
+    - `author` (string)
+    - `thumbnail` (string) - link ảnh (có dùng `picsum.photos/seed/...` để đảm bảo luôn có ảnh)
+    - `content` (string)
+    - `category` (string)
+    - `createdAt` (ISO string)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+    Thầy có thể chỉnh trực tiếp `src/data.ts` để thêm/bớt bài hoặc thay ảnh.
+
+    ## Cách chạy (máy của thầy chạy macOS / zsh)
+    1. Cài Node (phiên bản LTS, ví dụ Node 18+). Nếu chưa có, cài bằng Homebrew hoặc nvm.
+    2. Mở terminal trong thư mục project (`ktgk`) và cài dependencies:
+
+    ```bash
+    npm install
+    ```
+
+    3. Chạy development server:
+
+    ```bash
+    npm run dev
+    ```
+
+    4. Mở trình duyệt tới địa chỉ hiển thị trong terminal (mặc định `http://localhost:5173`).
+
+    5. Để build bản production:
+
+    ```bash
+    npm run build
+    ```
+
+    và để preview bản build:
+
+    ```bash
+    npm run preview
+    ```
+
+    ## Gợi ý kiểm tra/đánh giá nhanh
+    - Mở `src/data.ts` để kiểm tra dữ liệu mẫu (title, author, category, createdAt)
+    - Kiểm tra `PostList` hiển thị đủ 20 bài
+    - Mở từng `PostDetail` để kiểm nội dung dài và hình ảnh
+    - Thử thêm bài mới qua `PostForm` (nếu chức năng lưu vào localStorage đã được bật trong `utils/storage.ts`)
+
+    ## Lưu ý kỹ thuật
+    - Ảnh thumbnail dùng `https://picsum.photos/seed/<seed>/400/250` để tránh lỗi CORS/404. Nếu muốn dùng ảnh cụ thể, thay link trong `src/data.ts`.
+    - Dữ liệu hiện tại là tĩnh (file `data.ts`). Nếu cần, có thể kết nối nhanh tới fake API (JSON Server) hoặc chuyển sang backend thật.
+
+    ## Nếu thầy muốn thay đổi
+    - Muốn có API giả lập: cài `json-server` và export `SAMPLE_POSTS` thành `db.json` rồi chạy `json-server --watch db.json --port 3001`.
+    - Muốn xuất file CSV: tôi có thể thêm script nhỏ xuất `SAMPLE_POSTS` sang CSV.
+
+    ---
+    Nếu thầy cần, tôi sẽ:
+    - Gửi file `db.json` chứa dữ liệu mẫu để chạy `json-server`.
+    - Hoặc chỉnh giao diện/tiếng Việt cho từng component.
+
+    Cần chỉnh gì tiếp theo cứ nói em làm luôn.
