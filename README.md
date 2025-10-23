@@ -1,3 +1,85 @@
+# KTGK — Bài giữa kỳ: Ứng dụng demo Blog (React + TypeScript + Vite)
+
+Phiên bản nộp: giữa kỳ. README này trình bày mục đích, cấu trúc, cách chạy và hướng dẫn nhanh để thầy chấm.
+## Tóm tắt ngắn
+- Ứng dụng frontend nhỏ demo quản lý bài viết: danh sách bài, trang chi tiết, form thêm bài.
+- Công nghệ: React + TypeScript, build bằng Vite.
+- Dữ liệu mẫu: tĩnh trong `src/data.ts` (mảng `SAMPLE_POSTS`, khoảng 20 bài).
+## 1) Cấu trúc quan trọng
+- `index.html` — entry
+- `src/main.tsx` — mount React
+- `src/App.tsx` — component gốc
+- `src/routes.tsx` — định nghĩa routes (nếu có)
+- `src/types.ts` — định nghĩa kiểu `Post` và `Category`
+- `src/data.ts` — dữ liệu mẫu (`SAMPLE_POSTS: Post[]`)
+- `src/components/` — các component: `Navbar`, `PostList`, `PostCard`, `PostDetail`, `PostForm`
+- `src/utils/storage.ts` — helper lưu/đọc `localStorage` (nếu dùng)
+- `public/` — tài nguyên tĩnh (ảnh mặc định có thể để ở đây)
+## 2) Kiểu dữ liệu (`src/types.ts`)
+```ts
+export type Category = 'Công nghệ' | 'Du lịch' | 'Ẩm thực' | 'Đời sống' | 'Khác'
+
+export interface Post {
+  id: string
+  title: string
+  author: string
+  thumbnail: string
+  content: string
+  category: Category
+  createdAt: string // ISO timestamp
+}
+```
+## 3) Dữ liệu mẫu (`src/data.ts`)
+- `SAMPLE_POSTS: Post[]` chứa các bài với đầy đủ trường trên.
+- `thumbnail` sử dụng `https://picsum.photos/seed/<seed>/400/250` để có ảnh demo ổn định theo seed.
+- `createdAt` lưu dưới dạng ISO string (ví dụ: `2025-10-20T08:30:00.000Z`).
+## 4) Cách chạy (máy macOS / zsh)
+```bash
+# 1. Cài dependencies
+npm install
+
+# 2. Chạy dev server
+npm run dev
+
+# Mở trình duyệt tại URL in ra bởi vite (mặc định http://localhost:5173)
+
+# 3. Build production (nếu cần)
+npm run build
+npm run preview
+```
+## 5) Hướng dẫn nhanh cho thầy khi chấm
+- Kiểm tra `src/data.ts` có ~20 bài.
+- Mở trang chính: có danh sách bài (thumbnail, title, author, category, createdAt).
+- Click vào 1 bài: hiển thị trang chi tiết với nội dung đầy đủ.
+- Kiểm tra `PostForm` (nếu bật): thử thêm bài, đảm bảo bài xuất hiện (lưu tạm bằng localStorage hoặc state).
+- Mã nguồn: kiểm tra `types.ts`, `data.ts`, và các component trong `src/components/`.
+
+## 6) Tips kỹ thuật / mở rộng
+- Ảnh demo: `picsum.photos` phù hợp cho môi trường học — đổi sang CDN/Server khi production.
+- Nếu chuyển sang dùng fake API:
+  - Tạo `db.json` với:
+    ```json
+    { "posts": [ /* dán mảng SAMPLE_POSTS */ ] }
+    ```
+  - Cài `json-server` và chạy: `json-server --watch db.json --port 3001`.
+
+- Đề xuất: dùng UUID cho `id` khi chuyển sang backend thật.
+- Fallback image: thêm ảnh mặc định trong `public/` và bắt `onError` để gán ảnh này nếu thumbnail lỗi.
+
+## 7) Checklist nộp bài (gợi ý chấm nhanh)
+- [ ] Repo có thể khởi động (npm install, npm run dev)
+- [ ] Hiển thị danh sách bài (20 bài)
+- [ ] Hiển thị chi tiết bài khi click
+- [ ] Form thêm bài hoạt động (cập nhật UI / localStorage)
+- [ ] Mã nguồn có `types.ts`, `data.ts`, `components/` rõ ràng
+
+## 8) Muốn em bổ sung gì nữa?
+- Em có thể:
+  - Tạo `db.json` và commit để thầy chạy `json-server` nhanh
+  - Thêm npm script để xuất CSV/JSON từ `SAMPLE_POSTS`
+  - Thêm ảnh fallback và cập nhật components
+
+Xin thầy cho biết nếu cần thêm file `db.json` hoặc script hỗ trợ — em sẽ tạo ngay.
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -19,89 +101,55 @@ If you are developing a production application, we recommend updating the config
 export default defineConfig([
   globalIgnores(['dist']),
   {
-    # KTGK - Ứng dụng demo Blog (React + TypeScript + Vite)
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-    Đây là một ứng dụng nhỏ dùng để trình bày danh sách bài viết (posts), chi tiết bài viết, và form tạo bài. Mục tiêu: giúp thầy/chấm bài dễ hiểu cấu trúc, dữ liệu mẫu và cách chạy project.
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-    ## Tổng quan
-    - Ngôn ngữ: TypeScript
-    - Framework: React
-    - Build tool: Vite
-    - Mục đích: Demo chức năng CRUD cơ bản cho bài viết (hiển thị danh sách, xem chi tiết, tạo bài mới) dùng dữ liệu mẫu lưu tạm trong file.
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
-    ## Cấu trúc chính của project
-    - `index.html` - entry HTML
-    - `src/main.tsx` - điểm khởi chạy React
-    - `src/App.tsx` - component gốc
-    - `src/routes.tsx` - định nghĩa route (nếu có)
-    - `src/types.ts` - định nghĩa các kiểu dữ liệu (interface `Post`)
-    - `src/data.ts` - dữ liệu mẫu (mảng `SAMPLE_POSTS`) — nơi chứa ~20 bài viết mẫu
-    - `src/components/` - các component UI:
-      - `Navbar.tsx` - thanh điều hướng
-      - `PostList.tsx` - danh sách bài viết
-      - `PostCard.tsx` - thẻ bài viết (ở danh sách)
-      - `PostDetail.tsx` - trang chi tiết bài viết
-      - `PostForm.tsx` - form để thêm bài viết mới
-    - `src/utils/storage.ts` - helper lưu/đọc localStorage (nếu dùng lưu tạm)
-    - `public/` - tài nguyên tĩnh
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-    ## Dữ liệu mẫu
-    File `src/data.ts` chứa hằng `SAMPLE_POSTS: Post[]` với khoảng 20 bài viết mẫu. Mỗi bài bao gồm:
-    - `id` (string)
-    - `title` (string)
-    - `author` (string)
-    - `thumbnail` (string) - link ảnh (có dùng `picsum.photos/seed/...` để đảm bảo luôn có ảnh)
-    - `content` (string)
-    - `category` (string)
-    - `createdAt` (ISO string)
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-    Thầy có thể chỉnh trực tiếp `src/data.ts` để thêm/bớt bài hoặc thay ảnh.
-
-    ## Cách chạy (máy của thầy chạy macOS / zsh)
-    1. Cài Node (phiên bản LTS, ví dụ Node 18+). Nếu chưa có, cài bằng Homebrew hoặc nvm.
-    2. Mở terminal trong thư mục project (`ktgk`) và cài dependencies:
-
-    ```bash
-    npm install
-    ```
-
-    3. Chạy development server:
-
-    ```bash
-    npm run dev
-    ```
-
-    4. Mở trình duyệt tới địa chỉ hiển thị trong terminal (mặc định `http://localhost:5173`).
-
-    5. Để build bản production:
-
-    ```bash
-    npm run build
-    ```
-
-    và để preview bản build:
-
-    ```bash
-    npm run preview
-    ```
-
-    ## Gợi ý kiểm tra/đánh giá nhanh
-    - Mở `src/data.ts` để kiểm tra dữ liệu mẫu (title, author, category, createdAt)
-    - Kiểm tra `PostList` hiển thị đủ 20 bài
-    - Mở từng `PostDetail` để kiểm nội dung dài và hình ảnh
-    - Thử thêm bài mới qua `PostForm` (nếu chức năng lưu vào localStorage đã được bật trong `utils/storage.ts`)
-
-    ## Lưu ý kỹ thuật
-    - Ảnh thumbnail dùng `https://picsum.photos/seed/<seed>/400/250` để tránh lỗi CORS/404. Nếu muốn dùng ảnh cụ thể, thay link trong `src/data.ts`.
-    - Dữ liệu hiện tại là tĩnh (file `data.ts`). Nếu cần, có thể kết nối nhanh tới fake API (JSON Server) hoặc chuyển sang backend thật.
-
-    ## Nếu thầy muốn thay đổi
-    - Muốn có API giả lập: cài `json-server` và export `SAMPLE_POSTS` thành `db.json` rồi chạy `json-server --watch db.json --port 3001`.
-    - Muốn xuất file CSV: tôi có thể thêm script nhỏ xuất `SAMPLE_POSTS` sang CSV.
-
-    ---
-    Nếu thầy cần, tôi sẽ:
-    - Gửi file `db.json` chứa dữ liệu mẫu để chạy `json-server`.
-    - Hoặc chỉnh giao diện/tiếng Việt cho từng component.
-
-    Cần chỉnh gì tiếp theo cứ nói em làm luôn.
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
