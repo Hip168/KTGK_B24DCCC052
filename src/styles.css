@@ -72,6 +72,37 @@ body {
   margin-top: 20px;
 }
 
+/* ========== SEARCH ========== */
+.search-row { max-width: 740px; }
+.search-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(18, 22, 26, 0.04);
+}
+.search-box .search-icon { margin-right: 8px; opacity: 0.9; }
+.search-input {
+  border: none;
+  flex: 1;
+  font-size: 15px;
+  padding: 6px 8px;
+}
+.search-input:focus { outline: none; }
+.search-clear {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  padding: 4px 8px;
+  margin-left: 6px;
+  cursor: pointer;
+  color: #777;
+  border-radius: 50%;
+}
+.search-clear:hover { background: rgba(0,0,0,0.04); color: #555 }
+
 /* ========== CARD ========== */
 .card {
   background: white;
