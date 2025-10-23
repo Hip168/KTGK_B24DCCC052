@@ -66,14 +66,7 @@ npm run preview
 - Đề xuất: dùng UUID cho `id` khi chuyển sang backend thật.
 - Fallback image: thêm ảnh mặc định trong `public/` và bắt `onError` để gán ảnh này nếu thumbnail lỗi.
 
-## 7) Checklist nộp bài (gợi ý chấm nhanh)
-- [ ] Repo có thể khởi động (npm install, npm run dev)
-- [ ] Hiển thị danh sách bài (20 bài)
-- [ ] Hiển thị chi tiết bài khi click
-- [ ] Form thêm bài hoạt động (cập nhật UI / localStorage)
-- [ ] Mã nguồn có `types.ts`, `data.ts`, `components/` rõ ràng
-
-## 8) Muốn em bổ sung gì nữa?
+## 7) Muốn em bổ sung gì nữa?
 - Em có thể:
   - Tạo `db.json` và commit để thầy chạy `json-server` nhanh
   - Thêm npm script để xuất CSV/JSON từ `SAMPLE_POSTS`
